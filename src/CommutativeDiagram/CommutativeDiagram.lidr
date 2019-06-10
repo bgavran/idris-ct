@@ -26,32 +26,43 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 > %access public export
 > %default total
 >
-> data ConcatenationOfMorphisms : (cat : Category) -> (origin, target : obj cat) -> Type where
->   MkSingleMorphism    : mor cat a b -> ConcatenationOfMorphisms cat a b
->   MkCompositeMorphism : ConcatenationOfMorphisms cat a b
->                      -> ConcatenationOfMorphisms cat b c
->                      -> ConcatenationOfMorphisms cat a c
+> record CommutativeSquare (cat : Category) (source : obj cat) (target : obj cat) where
+>   constructor MkCommutativeSquare
+>   a : obj cat
+>   b : obj cat
+>   f : mor cat source a
+>   g : mor cat a target
+>   h : mor cat source b
+>   i : mor cat b target
+>   equality : compose cat source a target f g = compose cat source b target h i
 >
-> composeConcatenationOfMorphisms : ConcatenationOfMorphisms cat a b -> mor cat a b
-> composeConcatenationOfMorphisms (MkSingleMorphism f)                        = f
-> composeConcatenationOfMorphisms (MkCompositeMorphism {cat} {a} {b} {c} f g) =
->   compose cat a b c (composeConcatenationOfMorphisms f) (composeConcatenationOfMorphisms g)
+> csReflexivity : (f : mor cat source a) -> (g : mor cat a target) -> CommutativeSquare cat source target
+> csReflexivity {a} f g = MkCommutativeSquare a a f g f g Refl
 >
-> record CommutativeDiagram (cat : Category) (origin : obj cat) (target : obj cat) where
->   constructor MkCommutativeDiagram
->   first    : ConcatenationOfMorphisms cat origin target
->   second   : ConcatenationOfMorphisms cat origin target
->   equality : composeConcatenationOfMorphisms first = composeConcatenationOfMorphisms second
+> csSymmetry : CommutativeSquare cat source target -> CommutativeSquare cat source target
+> csSymmetry (MkCommutativeSquare a b f g h i equality) = MkCommutativeSquare b a h i f g (sym equality)
 >
-> cdReflexivity : ConcatenationOfMorphisms cat a b -> CommutativeDiagram cat a b
-> cdReflexivity mor = MkCommutativeDiagram mor mor Refl
+> transitivityLemma :
+>      (h1 : mor cat source b1)
+>   -> (i1 : mor cat b1 target)
+>   -> (f2 : mor cat source a2)
+>   -> (g2 : mor cat a2 target)
+>   -> (h2 : mor cat source b2)
+>   -> (i2 : mor cat b2 target)
+>   -> (b1Ea2 : b1 = a2)
+>   -> (h1Ef2 : h1 = f2)
+>   -> (i1Ef2 : i1 = g2)
+>   -> (equality : compose cat source a2 target f2 g2 = compose cat source b2 target h2 i2)
+>   -> compose cat source b1 target h1 i1 = compose cat source b2 target h2 i2
+> transitivityLemma f2 g2 f2 g2 h2 i2 Refl Refl Refl equality = equality
 >
-> cdSymmetry : CommutativeDiagram cat a b -> CommutativeDiagram cat a b
-> cdSymmetry (MkCommutativeDiagram first second equality) = MkCommutativeDiagram second first (sym equality)
->
-> cdTransitivity :
->      (cd1, cd2 : CommutativeDiagram cat a b)
->   -> second cd1 = first cd2
->   -> CommutativeDiagram cat a b
-> cdTransitivity (MkCommutativeDiagram first common equality1) (MkCommutativeDiagram common second equality2) Refl =
->   MkCommutativeDiagram first second (trans equality1 equality2)
+> csTransitivity :
+>      (cs1, cs2 : CommutativeSquare cat source target)
+>   -> (b cs1 = a cs2)
+>   -> (h cs1 = f cs2)
+>   -> (i cs1 = g cs2)
+>   -> CommutativeSquare cat source target
+> csTransitivity (MkCommutativeSquare a1 b1 f1 g1 h1 i1 eq1)
+>                (MkCommutativeSquare a2 b2 f2 g2 h2 i2 eq2)
+>                b1Ea2 h1Ef2 i1Eg2 =
+>   MkCommutativeSquare a1 b2 f1 g1 h2 i2 (trans eq1 (transitivityLemma h1 i1 f2 g2 h2 i2 b1Ea2 h1Ef2 i1Eg2 eq2))

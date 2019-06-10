@@ -37,10 +37,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 > composeConcatenationOfMorphisms (MkCompositeMorphism {cat} {a} {b} {c} f g) =
 >   compose cat a b c (composeConcatenationOfMorphisms f) (composeConcatenationOfMorphisms g)
 >
-> record CommutativeDiagram (cat : Category) where
+> record CommutativeDiagram (cat : Category) (origin : obj cat) (target : obj cat) where
 >   constructor MkCommutativeDiagram
->   origin   : obj cat
->   target   : obj cat 
 >   first    : ConcatenationOfMorphisms cat origin target
 >   second   : ConcatenationOfMorphisms cat origin target
 >   equality : composeConcatenationOfMorphisms first = composeConcatenationOfMorphisms second
+>
+> cdReflexivity : ConcatenationOfMorphisms cat a b -> CommutativeDiagram cat a b
+> cdReflexivity mor = MkCommutativeDiagram mor mor Refl
+>
+> cdSymmetry : CommutativeDiagram cat a b -> CommutativeDiagram cat a b
+> cdSymmetry (MkCommutativeDiagram first second equality) = MkCommutativeDiagram second first (sym equality)
+>
+> cdTransitivity :
+>      (cd1, cd2 : CommutativeDiagram cat a b)
+>   -> second cd1 = first cd2
+>   -> CommutativeDiagram cat a b
+> cdTransitivity (MkCommutativeDiagram first common equality1) (MkCommutativeDiagram common second equality2) Refl =
+>   MkCommutativeDiagram first second (trans equality1 equality2)

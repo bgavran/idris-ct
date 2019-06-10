@@ -66,3 +66,33 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 >                (MkCommutativeSquare a2 b2 f2 g2 h2 i2 eq2)
 >                b1Ea2 h1Ef2 i1Eg2 =
 >   MkCommutativeSquare a1 b2 f1 g1 h2 i2 (trans eq1 (transitivityLemma h1 i1 f2 g2 h2 i2 b1Ea2 h1Ef2 i1Eg2 eq2))
+>
+> eqCsComposition :
+>      (eq1 : compose cat source1 a1 b2 f1 g1 = compose cat source1 b1 b2 h1 i1)
+>   -> (eq2 : compose cat a1 a2 target2 f2 g2 = compose cat a1 b2 target2 g1 i2)
+>   -> compose cat source1 a2 target2 (compose cat source1 a1 a2 f1 f2) g2
+>    = compose cat source1 b1 target2 h1 (compose cat b1 b2 target2 i1 i2)
+> eqCsComposition {cat} {source1} {a1} {a2} {b1} {b2} {target2} {f1} {f2} {g1} {g2} {h1} {i1} {i2} eq1 eq2 =
+>   trans (sym $ associativity cat source1 a1 a2 target2 f1 f2 g2)
+>         (trans (cong {f = compose cat source1 a1 target2 f1} eq2)
+>                (trans (associativity cat source1 a1 b2 target2 f1 g1 i2)
+>                       (trans (cong {f = \x => compose cat source1 b2 target2 x i2} eq1)
+>                              (sym $ associativity cat source1 b1 b2 target2 h1 i1 i2))))
+>
+> csComposition :
+>      (cs1 : CommutativeSquare cat source1 target1)
+>   -> (cs2 : CommutativeSquare cat source2 target2)
+>   -> (a cs1 = source2)
+>   -> (target1 = b cs2)
+>   -> (g cs1 = h cs2)
+>   -> CommutativeSquare cat source1 target2
+> csComposition {cat} {source1} {target2}
+>               (MkCommutativeSquare a1 b1 f1 g1 h1 i1 eq1)
+>               (MkCommutativeSquare a2 b2 f2 g2 g1 i2 eq2)
+>               Refl Refl Refl =
+>   MkCommutativeSquare a2 b1
+>                       (compose cat source1 a1 a2 f1 f2)
+>                       g2
+>                       h1
+>                       (compose cat b1 b2 target2 i1 i2)
+>                       (eqCsComposition eq1 eq2)

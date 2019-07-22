@@ -16,3 +16,4 @@ modules = Utils
         , PointedTypes.PointedTypesCategory
         , Preorder.MonotoneMap
         , Preorder.UniquePreorder
+        , Preorder.PreorderAsCategory

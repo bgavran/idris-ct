@@ -6,14 +6,23 @@ modules = Utils
         , Basic.Isomorphism
         , Basic.NaturalTransformation
         , Basic.NaturalIsomorphism
+        , CoLimits.CoProduct
+        , CoLimits.InitialObject
         , Discrete.DiscreteCategory
         , Discrete.FunctionAsFunctor
         , Idris.TypesAsCategory
         , Dual.DualCategory
         , Dual.DualFunctor
+        , Free.Graph
+        , Free.Path
+        , Free.PathCategory
+        , Free.FreeFunctor
+        , MonoidalCategory.MonoidalCategoryHelpers
+        , MonoidalCategory.MonoidalCategory
         , Product.ProductCategory
         , Product.ProductFunctor
         , PointedTypes.PointedTypesCategory
         , Preorder.MonotoneMap
         , Preorder.UniquePreorder
+        , Preorder.MonotoneMapAsFunctor
         , Preorder.PreorderAsCategory

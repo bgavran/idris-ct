@@ -7,7 +7,6 @@ import MonoidalCategory.MonoidalCategoryHelpers
 import Product.ProductCategory
 
 public export
--- we are not using a record here because compilation does not terminate in that case
 record MonoidalCategory where
   constructor MkMonoidalCategory
   cat : Category

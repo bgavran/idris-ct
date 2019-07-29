@@ -24,6 +24,8 @@ modules = Utils
         , Monoid.Monoid
         , Monoid.MonoidAsCategory
         , Monoid.MonoidMorphism
+        , Monoid.MonoidMorphismAsFunctor
+        , Monoid.MonoidsCategory
         , MonoidalCategory.MonoidalCategoryHelpers
         , MonoidalCategory.MonoidalCategory
         , MonoidalCategory.StrictMonoidalCategory

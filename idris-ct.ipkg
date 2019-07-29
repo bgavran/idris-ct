@@ -6,17 +6,24 @@ modules = Utils
         , Basic.Isomorphism
         , Basic.NaturalTransformation
         , Basic.NaturalIsomorphism
+        , Cats.CatsAsCategory
         , CoLimits.CoProduct
         , CoLimits.InitialObject
         , Discrete.DiscreteCategory
         , Discrete.FunctionAsFunctor
         , Idris.TypesAsCategory
+        , Idris.TypesAsCategoryExtensional
+        , Idris.FunctorAsCFunctor
+        , Idris.EitherAsCoProduct
         , Dual.DualCategory
         , Dual.DualFunctor
         , Free.Graph
         , Free.Path
         , Free.PathCategory
         , Free.FreeFunctor
+        , Monoid.Monoid
+        , Monoid.MonoidAsCategory
+        , Monoid.MonoidMorphism
         , MonoidalCategory.MonoidalCategoryHelpers
         , MonoidalCategory.MonoidalCategory
         , MonoidalCategory.StrictMonoidalCategory

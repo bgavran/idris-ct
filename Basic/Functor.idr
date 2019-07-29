@@ -17,13 +17,13 @@ record CFunctor (cat1 : Category) (cat2 : Category) where
                  -> mapMor a c (compose cat1 a b c f g)
                   = compose cat2 (mapObj a) (mapObj b) (mapObj c) (mapMor a b f) (mapMor b c g)
 
--- public export
--- functorEq : (cat1, cat2 : Category)
---   -> (fun1, fun2 : CFunctor cat1 cat2)
---   -> ((a : obj cat1) -> (mapObj fun1 a = mapObj fun2 a))
---   -> ((a, b : obj cat1) -> (f : mor cat1 a b) -> (mapMor fun1 a b f = mapMor fun2 a b f))
---   -> fun1 = fun2
--- functorEq cat1 cat2 fun1 fun2 prfObj prfMor = ?wat --really_believe_me ()
+public export
+functorEq : (cat1, cat2 : Category)
+  -> (fun1, fun2 : CFunctor cat1 cat2)
+  -> ((a : obj cat1) -> mapObj fun1 a = mapObj fun2 a)
+  -> ((a, b : obj cat1) -> (f : mor cat1 a b) -> mapMor fun1 a b f ~=~ mapMor fun2 a b f)
+  -> fun1 = fun2
+functorEq cat1 cat2 fun1 fun2 prfObj prfMor = believe_me ()
 
 public export
 idFunctor : (cat : Category) -> CFunctor cat cat

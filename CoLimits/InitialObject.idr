@@ -16,11 +16,12 @@ composeInitialMorphisms :
   -> (a, b : InitialObject cat)
   -> mor cat (carrier a) (carrier a)
 composeInitialMorphisms cat a b =
-  let
-    x = carrier a
-    y = carrier b
-  in
-    compose cat x y x (exists a y) (exists b x)
+  compose cat x y x (exists a y) (exists b x)
+  where
+  x : obj cat
+  x = carrier a
+  y : obj cat
+  y = carrier b
 
 public export
 initialObjectsAreIsomorphic :

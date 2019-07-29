@@ -19,6 +19,7 @@ modules = Utils
         , Free.FreeFunctor
         , MonoidalCategory.MonoidalCategoryHelpers
         , MonoidalCategory.MonoidalCategory
+        , MonoidalCategory.SymmetricMonoidalCategoryHelpers
         , Product.ProductCategory
         , Product.ProductFunctor
         , PointedTypes.PointedTypesCategory

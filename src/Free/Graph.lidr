@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 > module Free.Graph
 >
-> import Data.List
+> import Data.Vect
 >
 > %access public export
 > %default total
@@ -29,10 +29,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 > record Graph where
 >   constructor MkGraph
 >   vertices : Type
->   edges    : List (vertices, vertices)
+>   numEdges : Nat
+>   edges    : Vect numEdges (vertices, vertices)
 >
 > Edge : (g : Graph) -> (i, j : vertices g) -> Type
-> Edge (MkGraph _ e) v1 v2 = Elem (v1, v2) e
+> Edge (MkGraph _ _ e) v1 v2 = Elem (v1, v2) e
 >
 > edgeOrigin : {g : Graph} -> Edge g i j -> vertices g
 > edgeOrigin {i} _ = i
@@ -43,4 +44,4 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 data TriangleVertices = One | Two | Three
 
 triangle : Graph
-triangle = MkGraph TriangleVertices [(One, Two), (Two, Three), (Three, One)]
+triangle = MkGraph TriangleVertices 3 [(One, Two), (Two, Three), (Three, One)]

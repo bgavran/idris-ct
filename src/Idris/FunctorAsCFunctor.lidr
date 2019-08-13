@@ -42,7 +42,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 >      (func : VerifiedFunctor f)
 >   -> (a : Type)
 >   -> functorOnMorphisms func a a (extIdentity a) = extIdentity (f a)
-> functorPreserveId _ a = funExt (\x => functorIdentity {a} id (\v => Refl) x)
+> functorPreserveId {f} _ a = funExt (functorIdentity {f} {a} id (\v => Refl))
 >
 > functorPreserveCompose :
 >      (func : VerifiedFunctor f)

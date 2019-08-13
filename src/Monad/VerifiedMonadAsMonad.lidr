@@ -64,42 +64,90 @@ interface (Monad m, VerifiedApplicative m) => VerifiedMonad (m : Type -> Type) w
                        (mx >>= f) >>= g = mx >>= (\x => f x >>= g)
 
 >
+> verifiedMonadToFunctor : VerifiedMonad m => Functor m
+> verifiedMonadToFunctor @{monad} = %implementation
+>
 > verifiedMonadToVerifiedFunctor : VerifiedMonad m => VerifiedFunctor m
 > verifiedMonadToVerifiedFunctor @{monad} = %implementation
 >
+> verifiedMonadToApplicative : VerifiedMonad m => Applicative m
+> verifiedMonadToApplicative @{monad} = %implementation
+>
+> verifiedMonadToVerifiedApplicative : VerifiedMonad m => VerifiedApplicative m
+> verifiedMonadToVerifiedApplicative @{monad} = %implementation
+>
+> verifiedMonadToMonad : VerifiedMonad m => Monad m
+> verifiedMonadToMonad @{monad} = %implementation
+>
 > verifiedMonadToCFunctor : VerifiedMonad m => CFunctor TypesAsCategoryExtensional.typesAsCategoryExtensional
->                                                      TypesAsCategoryExtensional.typesAsCategoryExtensional
+>                                                       TypesAsCategoryExtensional.typesAsCategoryExtensional
 > verifiedMonadToCFunctor @{monad} = functorToCFunctor $ verifiedMonadToVerifiedFunctor @{monad}
 >
+> verifiedMonadMapPure :
+>      (monad : VerifiedMonad m)
+>   -> (g : a -> b)
+>   -> (x : a)
+>   -> map {f = m} g (pure x) = pure (g x)
+> verifiedMonadMapPure monad g x = trans (applicativeMap @{verifiedMonadToVerifiedApplicative @{monad}} (pure x) g)
+>                                        (applicativeHomomorphism @{verifiedMonadToVerifiedApplicative @{monad}} x g)
+>
 > verifiedMonadUnit :
->      VerifiedMonad m
->   -> NaturalTransformation _ _ (idFunctor _) (verifiedMonadToCFunctor @{monad})
+>      (monad : VerifiedMonad m)
+>   -> NaturalTransformation _ _ (idFunctor _) (verifiedMonadToCFunctor {m})
+> verifiedMonadUnit {m} monad = MkNaturalTransformation
+>   (\_ => MkExtensionalTypeMorphism $ pure)
+>   (\a, b, f => case f of
+>                  MkExtensionalTypeMorphism g => funExt $ verifiedMonadMapPure monad g)
+>
+> verifiedMonadMultiplicationComp :
+>      (monad : VerifiedMonad m)
+>   -> (a : Type)
+>   -> mor TypesAsCategoryExtensional.typesAsCategoryExtensional
+>          (mapObj (verifiedMonadToCFunctor @{monad}) (mapObj (verifiedMonadToCFunctor @{monad}) a))
+>          (mapObj (verifiedMonadToCFunctor @{monad}) a)
+> verifiedMonadMultiplicationComp monad a = MkExtensionalTypeMorphism $ join
+>
+> verifiedMonadMapJoin :
+>      (monad : VerifiedMonad m)
+>   -> (g : a -> b)
+>   -> (x : mapObj (verifiedMonadToCFunctor @{monad}) (mapObj (verifiedMonadToCFunctor @{monad}) a))
+>   -> map {f = m} g (join x) = join (map {f = m} (map {f = m} g) x)
 >
 > verifiedMonadMultiplication :
->      VerifiedMonad m
+>      {m : Type -> Type}
+>   -> (monad : VerifiedMonad m)
 >   -> NaturalTransformation _ _ (functorComposition _ _ _ (verifiedMonadToCFunctor @{monad})
 >                                                          (verifiedMonadToCFunctor @{monad}))
 >                                (verifiedMonadToCFunctor @{monad})
->
-> verifiedMonadAssociativity :
->      (monad : VerifiedMonad m)
->   -> MonadAssociativity (verifiedMonadToCFunctor @{monad}) (verifiedMonadMultiplication monad)
->
-> verifiedMonadLeftUnit :
->      (monad : VerifiedMonad m)
->   -> MonadLeftUnit (verifiedMonadToCFunctor @{monad}) (verifiedMonadUnit monad) (verifiedMonadMultiplication monad)
->
-> verifiedMonadRightUnit :
->      (monad : VerifiedMonad m)
->   -> MonadRightUnit (verifiedMonadToCFunctor @{monad}) (verifiedMonadUnit monad) (verifiedMonadMultiplication monad)
->
-> verifiedMonadToMonad :
->      VerifiedMonad m
->   -> M.Monad TypesAsCategoryExtensional.typesAsCategoryExtensional
-> verifiedMonadToMonad {m} monad = MkMonad
->   (functorToCFunctor $ verifiedMonadToVerifiedFunctor @{monad})
->   (verifiedMonadUnit @{monad})
->   (verifiedMonadMultiplication @{monad})
->   (verifiedMonadAssociativity @{monad})
->   (verifiedMonadLeftUnit @{monad})
->   (verifiedMonadRightUnit @{monad})
+> verifiedMonadMultiplication monad = ?asdf
+
+-- > verifiedMonadMultiplication {m} monad = MkNaturalTransformation
+-- >   (verifiedMonadMultiplicationComp monad)
+-- >   ?asdf
+
+-- >   (\a, b, f => case f of
+-- >                  MkExtensionalTypeMorphism g => funExt $ verifiedMonadMapJoin monad g)
+
+-- >
+-- > verifiedMonadAssociativity :
+-- >      (monad : VerifiedMonad m)
+-- >   -> MonadAssociativity (verifiedMonadToCFunctor @{monad}) (verifiedMonadMultiplication monad)
+-- >
+-- > verifiedMonadLeftUnit :
+-- >      (monad : VerifiedMonad m)
+-- >   -> MonadLeftUnit (verifiedMonadToCFunctor @{monad}) (verifiedMonadUnit monad) (verifiedMonadMultiplication monad)
+-- >
+-- > verifiedMonadRightUnit :
+-- >      (monad : VerifiedMonad m)
+-- >   -> MonadRightUnit (verifiedMonadToCFunctor @{monad}) (verifiedMonadUnit monad) (verifiedMonadMultiplication monad)
+-- >
+-- > verifiedMonadToMonad :
+-- >      VerifiedMonad m
+-- >   -> M.Monad TypesAsCategoryExtensional.typesAsCategoryExtensional
+-- > verifiedMonadToMonad {m} monad = MkMonad
+-- >   (functorToCFunctor $ verifiedMonadToVerifiedFunctor @{monad})
+-- >   (verifiedMonadUnit @{monad})
+-- >   (verifiedMonadMultiplication @{monad})
+-- >   (verifiedMonadAssociativity @{monad})
+-- >   (verifiedMonadLeftUnit @{monad})
+-- >   (verifiedMonadRightUnit @{monad})

@@ -30,6 +30,7 @@ mods = [ "Basic.Category"
        , "Basic.Isomorphism"
        , "Basic.NaturalIsomorphism"
        , "Basic.NaturalTransformation"
+       , "Idris.TypesAsCategoryExtensional"
        , "Utils"
        ]
 idris_opts = ["-p", "contrib"]
